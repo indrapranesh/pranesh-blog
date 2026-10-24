@@ -1,0 +1,35 @@
+/* Inline code and code blocks. Shiki adds the token colors. */
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+:not(pre) > code {
+  padding: 0.1em 0.3em;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow-wrap: break-word;
+}
+
+pre {
+  margin: 0 0 var(--space);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow-x: auto;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+pre code {
+  font-size: inherit;
+}
+
+/* Shiki sets its own background; keep code blocks on the page color. */
+pre.astro-code {
+  background-color: var(--background) !important;
+}

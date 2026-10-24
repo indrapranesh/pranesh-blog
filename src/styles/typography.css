@@ -1,0 +1,128 @@
+/* Article and page text (anything inside .prose, plus page headings). */
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem;
+}
+
+.prose h2 {
+  font-size: 1.35rem;
+  margin: 2.5rem 0 1rem;
+}
+
+.prose h3 {
+  font-size: 1.15rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.prose h4 {
+  font-size: 1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose table,
+.prose figure {
+  margin: 0 0 var(--space);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+}
+
+.prose li + li {
+  margin-top: 0.25em;
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin: 0.25em 0 0;
+}
+
+.prose blockquote {
+  margin-left: 0;
+  padding-left: 1em;
+  border-left: 2px solid var(--foreground);
+  color: var(--muted);
+}
+
+.prose hr {
+  margin: 2.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.prose img {
+  display: block;
+  margin: 0 auto;
+}
+
+.prose figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* Tables scroll sideways on small screens instead of breaking the layout. */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.prose th,
+.prose td {
+  padding: 0.4em 0.75em;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  border-bottom-color: var(--foreground);
+  font-weight: 600;
+}
+
+/* "#" link appended to headings (see src/lib/heading-anchors.ts). */
+.heading-anchor {
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: none;
+  visibility: hidden;
+}
+
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.heading-anchor:focus-visible {
+  visibility: visible;
+}
+
+.prose :is(h2, h3, h4) {
+  scroll-margin-top: 1rem;
+}
+
+/* Footnotes */
+.prose .footnotes {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9em;
+}

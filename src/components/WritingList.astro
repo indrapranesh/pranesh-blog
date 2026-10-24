@@ -1,0 +1,34 @@
+---
+import WritingItem from './WritingItem.astro';
+import type { Post } from '../lib/posts';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+
+// Posts arrive newest first, so years come out in descending order too.
+const years = new Map<number, Post[]>();
+for (const post of posts) {
+  const year = post.data.publishedAt.getUTCFullYear();
+  years.set(year, [...(years.get(year) ?? []), post]);
+}
+---
+
+<section class="writing" aria-labelledby="writing-heading">
+  <h2 id="writing-heading">Writing</h2>
+  {posts.length === 0 && <p class="meta">Nothing published yet.</p>}
+  {
+    [...years].map(([year, yearPosts]) => (
+      <section aria-labelledby={`year-${year}`}>
+        <h3 id={`year-${year}`} class="year">{year}</h3>
+        <ul class="writing-items">
+          {yearPosts.map((post) => (
+            <WritingItem post={post} />
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</section>

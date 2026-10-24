@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Introduction from '../components/Introduction.astro';
+import WritingList from '../components/WritingList.astro';
+import { site } from '../data/site';
+import { getPosts } from '../lib/posts';
+
+const posts = await getPosts();
+---
+
+<BaseLayout description={site.description}>
+  <h1 class="visually-hidden">{site.title}</h1>
+  <Introduction />
+  <WritingList posts={posts} />
+</BaseLayout>

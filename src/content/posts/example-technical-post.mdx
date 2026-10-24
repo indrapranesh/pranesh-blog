@@ -1,0 +1,89 @@
+---
+title: "Sample: Retrying Requests with Exponential Backoff"
+description: "Sample content showing code blocks, tables, headings, and links in an MDX post. Safe to delete."
+publishedAt: 2026-10-24
+updatedAt: 2026-10-24
+tags:
+  - engineering
+  - sample
+draft: false
+---
+
+export const maxAttempts = 5;
+
+> **Sample content.** This post demonstrates technical formatting: headings, code blocks, tables, and links. Delete `src/content/posts/example-technical-post.mdx` when you publish your own writing.
+
+When a request to another service fails with a temporary error, a common approach is to try again after a short wait. *Exponential backoff* increases that wait after each failed attempt, so a struggling service isn't flooded with retries.
+
+## The basic idea
+
+Wait a base delay after the first failure, then double it each time, up to a cap. Adding random *jitter* spreads retries from many clients over time. The AWS Architecture Blog article [Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) compares several variants.
+
+## A TypeScript example
+
+```ts
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts = 5,
+  baseDelayMs = 100,
+  maxDelayMs = 5_000,
+): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt >= maxAttempts) throw error;
+      const cap = Math.min(maxDelayMs, baseDelayMs * 2 ** (attempt - 1));
+      const delay = Math.random() * cap; // "full jitter"
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+```
+
+### The same idea in Python
+
+```python
+import random
+import time
+
+
+def with_retry(fn, max_attempts=5, base_delay=0.1, max_delay=5.0):
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return fn()
+        except Exception:
+            if attempt == max_attempts:
+                raise
+            cap = min(max_delay, base_delay * 2 ** (attempt - 1))
+            time.sleep(random.uniform(0, cap))
+```
+
+## Delays without jitter
+
+With a base delay of 100 ms and a 5 second cap, the maximum wait before each retry grows like this:
+
+| Attempt | Maximum delay |
+| ------- | ------------: |
+| 1       |        100 ms |
+| 2       |        200 ms |
+| 3       |        400 ms |
+| 4       |        800 ms |
+| 5       |      1,600 ms |
+
+This example stops after {maxAttempts} attempts. That number comes from an MDX `export` at the top of the file, which shows that MDX can mix JavaScript expressions into the text.
+
+## What to retry
+
+Only retry errors that are likely to be temporary. A rough guide for HTTP:
+
+- **Retry:** `429 Too Many Requests`, `503 Service Unavailable`, network timeouts.
+- **Don't retry:** `400 Bad Request`, `401 Unauthorized`, `404 Not Found`.
+
+Retrying a request that changes data is only safe when the operation is *idempotent*, meaning that doing it twice has the same effect as doing it once.
+
+Inline code such as `Math.random()` uses the monospace font too, and long lines in code blocks scroll sideways instead of wrapping:
+
+```bash
+curl --retry 5 --retry-delay 1 --retry-max-time 30 --fail --silent --show-error https://example.com/api/health
+```

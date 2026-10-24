@@ -1,0 +1,51 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+  type?: 'website' | 'article';
+  publishedAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  tags?: string[] | undefined;
+  noindex?: boolean;
+}
+
+const { title, description, type = 'website', publishedAt, updatedAt, tags = [], noindex = false } = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.title}` : site.title;
+const metaDescription = description ?? site.defaultSeoDescription;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? site.url);
+const image = site.socialImage ? new URL(site.socialImage, Astro.site ?? site.url) : undefined;
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={metaDescription} />
+<meta name="author" content={site.author} />
+{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalURL} />}
+<link rel="alternate" type="application/rss+xml" title={site.title} href={new URL('/rss.xml', Astro.site ?? site.url)} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.title} />
+<meta property="og:title" content={title ?? site.title} />
+<meta property="og:description" content={metaDescription} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:locale" content={site.lang} />
+{image && <meta property="og:image" content={image} />}
+
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title ?? site.title} />
+<meta name="twitter:description" content={metaDescription} />
+{image && <meta name="twitter:image" content={image} />}
+
+{
+  type === 'article' && publishedAt && (
+    <>
+      <meta property="article:published_time" content={publishedAt.toISOString()} />
+      <meta property="article:modified_time" content={(updatedAt ?? publishedAt).toISOString()} />
+      <meta property="article:author" content={site.author} />
+      {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    </>
+  )
+}

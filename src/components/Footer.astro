@@ -1,0 +1,21 @@
+---
+import { footer } from '../data/footer';
+import { socialLinks } from '../data/social-links';
+
+const text = footer.text.replace('{year}', String(new Date().getFullYear()));
+---
+
+<footer class="site-footer">
+  {
+    footer.showSocialLinks && socialLinks.length > 0 && (
+      <ul class="inline-list">
+        {socialLinks.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  {text && <p>{text}</p>}
+</footer>

@@ -1,0 +1,23 @@
+---
+import { site } from '../data/site';
+import { navigation } from '../data/navigation';
+
+const current = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<header class="site-header">
+  <a class="site-title" href="/">{site.title}</a>
+  <nav aria-label="Main">
+    <ul>
+      {
+        navigation.map((link) => (
+          <li>
+            <a href={link.href} aria-current={current === link.href ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
