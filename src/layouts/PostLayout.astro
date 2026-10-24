@@ -1,13 +1,16 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import PostHeader from '../components/PostHeader.astro';
+import PostNav from '../components/PostNav.astro';
 import { readingTime, type Post } from '../lib/posts';
 
 interface Props {
   post: Post;
+  newer: Post | undefined;
+  older: Post | undefined;
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { title, description, publishedAt, updatedAt, tags } = post.data;
 ---
 
@@ -26,5 +29,6 @@ const { title, description, publishedAt, updatedAt, tags } = post.data;
       <slot />
     </div>
   </article>
+  <PostNav newer={newer} older={older} />
   <p class="back back-bottom"><a href="/">← All writing</a></p>
 </BaseLayout>

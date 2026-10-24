@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import { socialLinks } from '../data/social-links';
 
 interface Props {
   title?: string | undefined;
@@ -17,6 +18,39 @@ const pageTitle = title ? `${title} · ${site.title}` : site.title;
 const metaDescription = description ?? site.defaultSeoDescription;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? site.url);
 const image = site.socialImage ? new URL(site.socialImage, Astro.site ?? site.url) : undefined;
+
+// Structured data (schema.org) so search engines know who wrote what.
+const siteURL = new URL('/', Astro.site ?? site.url).href;
+const person = {
+  '@type': 'Person',
+  name: site.author,
+  url: siteURL,
+  sameAs: socialLinks.map((link) => link.href).filter((href) => href.startsWith('http')),
+};
+const structuredData =
+  type === 'article' && publishedAt
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description: metaDescription,
+        url: canonicalURL.href,
+        datePublished: publishedAt.toISOString(),
+        dateModified: (updatedAt ?? publishedAt).toISOString(),
+        keywords: tags.join(', '),
+        inLanguage: site.lang,
+        author: person,
+        ...(image ? { image: image.href } : {}),
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: site.title,
+        url: siteURL,
+        description: metaDescription,
+        inLanguage: site.lang,
+        author: person,
+      };
 ---
 
 <title>{pageTitle}</title>
@@ -49,3 +83,5 @@ const image = site.socialImage ? new URL(site.socialImage, Astro.site ?? site.ur
     </>
   )
 }
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />

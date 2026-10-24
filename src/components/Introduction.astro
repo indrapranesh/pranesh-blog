@@ -1,7 +1,11 @@
 ---
+import SocialLinks from './SocialLinks.astro';
 import { Content } from '../data/introduction.md';
 ---
 
-<section class="introduction prose" aria-label="Introduction">
-  <Content />
+<section class="introduction" aria-label="About me">
+  <div class="prose">
+    <Content />
+  </div>
+  <SocialLinks class="introduction-links" />
 </section>

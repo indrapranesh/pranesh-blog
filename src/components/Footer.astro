@@ -1,21 +1,13 @@
 ---
+import SocialLinks from './SocialLinks.astro';
 import { footer } from '../data/footer';
-import { socialLinks } from '../data/social-links';
 
 const text = footer.text.replace('{year}', String(new Date().getFullYear()));
+// The homepage already shows the links under the introduction.
+const showLinks = footer.showSocialLinks && Astro.url.pathname !== '/';
 ---
 
 <footer class="site-footer">
-  {
-    footer.showSocialLinks && socialLinks.length > 0 && (
-      <ul class="footer-links">
-        {socialLinks.map((link) => (
-          <li>
-            <a href={link.href}>{link.label}</a>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  {showLinks && <SocialLinks />}
   {text && <p class="footer-text">{text}</p>}
 </footer>

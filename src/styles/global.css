@@ -179,57 +179,61 @@ img {
   color: var(--muted);
 }
 
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.25rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.footer-links a {
-  color: var(--muted);
-}
-
-.footer-links a:hover {
-  color: var(--foreground);
-}
-
 .footer-text {
   margin: 0;
 }
 
-/* Homepage introduction: the first paragraph is the headline, the rest a lede. */
+/* Homepage introduction ("about me"): the first paragraph is the headline. */
 
 .introduction {
   margin-bottom: 5rem;
 }
 
-.introduction > p:first-child {
-  margin: 0 0 1rem;
+.introduction .prose > p:first-child {
+  margin: 0 0 1.25rem;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
 
-.introduction > p:not(:first-child) {
-  max-width: 34em;
-  margin: 0 0 0.75rem;
-  font-size: 1.125rem;
-  line-height: 1.6;
+@media (min-width: 640px) {
+  .introduction .prose > p:first-child {
+    font-size: 2.25rem;
+  }
+}
+
+.introduction .prose > p {
+  margin-bottom: 1rem;
+}
+
+.introduction-links {
+  margin-top: 1.75rem;
+}
+
+/* Links list (under the introduction and in the footer). */
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+}
+
+.social-links a {
   color: var(--muted);
 }
 
-@media (min-width: 640px) {
-  .introduction > p:first-child {
-    font-size: 2.25rem;
-  }
+.social-links a:hover {
+  color: var(--foreground);
+}
 
-  .introduction > p:not(:first-child) {
-    font-size: 1.25rem;
-  }
+.introduction-links a {
+  color: var(--foreground);
 }
 
 /* Homepage index */
@@ -269,7 +273,7 @@ img {
   .year {
     position: absolute;
     /* Line up with the first entry's date: same top padding and line box. */
-    top: 0.35rem;
+    top: 0.6rem;
     right: calc(100% + 1.5rem);
     margin: 0;
     line-height: calc(1.7 * 1.0625rem);
@@ -292,7 +296,7 @@ img {
   grid-template-columns: 4.25rem minmax(0, 1fr);
   column-gap: 0.75rem;
   align-items: baseline;
-  padding: 0.35rem 0;
+  padding: 0.6rem 0;
 }
 
 .entry-date {
@@ -314,6 +318,14 @@ img {
 
 .entry-leader {
   display: none;
+}
+
+.entry-summary {
+  grid-column: 2 / -1;
+  margin: 0.15rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--muted);
 }
 
 .entry-meta {
@@ -385,6 +397,14 @@ img {
   }
 }
 
+.post-summary {
+  margin: 0 0 1.25rem;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
 .post-meta,
 .post-tags {
   display: flex;
@@ -404,6 +424,108 @@ img {
 .post-tags > li + li::before {
   content: "·";
   margin-right: 0.6em;
+}
+
+/* Previous / next post */
+
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.post-nav a {
+  display: block;
+  text-decoration: none;
+}
+
+.post-nav-newer {
+  grid-column: 2;
+  text-align: right;
+}
+
+.post-nav-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+  color: var(--muted);
+}
+
+.post-nav-title {
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 0.2em;
+}
+
+.post-nav a:hover .post-nav-title {
+  text-decoration-color: var(--foreground);
+}
+
+.post-nav + .back-bottom {
+  margin-top: 2.5rem;
+}
+
+/* Larger tap targets for small text links (WCAG 2.2 target size). */
+.site-header nav a,
+.social-links a,
+.back a {
+  display: inline-block;
+  padding-block: 0.3rem;
+}
+
+/* Readers who ask for more contrast get black instead of grey. */
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #000000;
+    --border: #555555;
+  }
+}
+
+@media print {
+  .skip-link,
+  .site-header nav,
+  .back,
+  .post-nav,
+  .social-links,
+  .heading-anchor,
+  .entry-leader {
+    display: none !important;
+  }
+
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .site-header {
+    margin-bottom: 2rem;
+  }
+
+  .site-footer {
+    margin-top: 3rem;
+  }
+
+  /* Show where links go on paper. */
+  .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

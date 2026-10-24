@@ -8,7 +8,8 @@ const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    // One line shown under the title on the homepage and the post page, and used for SEO.
+    description: z.string().max(200, 'Keep the description to one line (200 characters or fewer).'),
     publishedAt: z.coerce.date(),
     updatedAt: z.coerce.date().optional(),
     // The first tag is the "primary" tag shown on the homepage.
