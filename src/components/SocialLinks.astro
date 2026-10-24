@@ -1,0 +1,23 @@
+---
+import { socialLinks } from '../data/social-links';
+
+interface Props {
+  class?: string;
+}
+
+const links = socialLinks.filter((link) => link.href.trim() !== '');
+---
+
+{
+  links.length > 0 && (
+    <ul class:list={['social-links', Astro.props.class]} aria-label="Links">
+      {links.map((link) => (
+        <li>
+          <a href={link.href} rel="me">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

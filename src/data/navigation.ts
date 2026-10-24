@@ -6,7 +6,4 @@ export interface NavigationLink {
   href: string;
 }
 
-export const navigation: NavigationLink[] = [
-  { label: 'about', href: '/about' },
-  { label: 'rss', href: '/rss.xml' },
-];
+export const navigation: NavigationLink[] = [{ label: 'rss', href: '/rss.xml' }];

@@ -56,19 +56,18 @@ Use `npm install <package>` only when adding a dependency. It updates `package-l
 │   ├── data/                  ← YOUR SITE CONTENT AND SETTINGS
 │   │   ├── site.ts            title, author, URL, SEO defaults, language
 │   │   ├── navigation.ts      header links
-│   │   ├── introduction.md    homepage introduction
-│   │   ├── about.md           About page
-│   │   ├── social-links.ts    footer links (GitHub, LinkedIn, email…)
+│   │   ├── introduction.md    about you (shown on the homepage)
+│   │   ├── social-links.ts    your links: GitHub, LinkedIn, resume, email…
 │   │   └── footer.ts          footer text and options
-│   ├── components/            Header, Footer, writing list, SEO tags…
+│   ├── components/            Header, Footer, writing list, post nav, SEO tags…
 │   ├── layouts/               BaseLayout (every page), PostLayout (articles)
 │   ├── lib/                   posts.ts (draft filtering, sorting, reading time),
 │   │                          heading-anchors.ts (adds "#" links to headings)
-│   ├── pages/                 Routes: /, /about, /posts/[slug], /rss.xml, /robots.txt, 404
+│   ├── pages/                 Routes: /, /posts/[slug], /rss.xml, /robots.txt, 404
 │   ├── styles/                global.css, typography.css, code.css
 │   └── content.config.ts      Front-matter schema for posts
 ├── astro.config.mjs           Astro config (integrations, Markdown, syntax highlighting)
-├── vercel.json                Vercel settings (no trailing slashes)
+├── vercel.json                Vercel settings (no trailing slashes, /about → / redirect)
 └── package.json
 ```
 
@@ -82,10 +81,10 @@ Use `npm install <package>` only when adding a dependency. It updates `package-l
 | Site description, SEO default      | `src/data/site.ts` → `description`, `defaultSeoDescription` |
 | Production URL (canonical, RSS, sitemap) | `src/data/site.ts` → `url`       |
 | Social preview image               | `src/data/site.ts` → `socialImage` (file goes in `public/`) |
-| Homepage introduction              | `src/data/introduction.md`             |
-| About page                         | `src/data/about.md`                    |
+| About you (homepage)               | `src/data/introduction.md`             |
 | Header navigation                  | `src/data/navigation.ts`               |
-| Social links                       | `src/data/social-links.ts`             |
+| Your links (GitHub, resume…)       | `src/data/social-links.ts`             |
+| Resume file                        | `public/resume.pdf`, then link `/resume.pdf` |
 | Footer text                        | `src/data/footer.ts`                   |
 | Articles                           | `src/content/posts/*.md` / `*.mdx`     |
 | Colors, fonts, widths, layout      | `src/styles/global.css` (variables are at the top) |
@@ -102,22 +101,36 @@ Add a navigation link (`src/data/navigation.ts`):
 
 ```ts
 export const navigation: NavigationLink[] = [
-  { label: 'about', href: '/about' },
-  { label: 'now', href: '/now' }, // new
+  { label: 'projects', href: 'https://github.com/indrapranesh?tab=repositories' }, // new
   { label: 'rss', href: '/rss.xml' },
 ];
 ```
 
-A new page like `/now` also needs a file in `src/pages/`. Copy `src/pages/about.astro` to `src/pages/now.astro` and point it at a new `src/data/now.md`.
+Write about yourself (`src/data/introduction.md`). There's no separate About page. The first paragraph is the large headline; aim for 10–12 lines after it:
 
-Change social links (`src/data/social-links.ts`):
+```markdown
+Hi, I'm Pranesh.
+
+I'm a software engineer working on …
+
+Outside work I …
+
+This site is where I write about …
+```
+
+Fill in your links (`src/data/social-links.ts`). They appear under the introduction on the homepage and in the footer of every post. **A link with an empty `href` is hidden**, so set only the ones you want:
 
 ```ts
 export const socialLinks: SocialLink[] = [
-  { label: 'github', href: 'https://github.com/your-name' },
+  { label: 'github', href: 'https://github.com/indrapranesh' },
+  { label: 'linkedin', href: 'https://www.linkedin.com/in/your-name' },
+  { label: 'resume', href: '/resume.pdf' }, // file at public/resume.pdf
   { label: 'email', href: 'mailto:you@example.com' },
+  { label: 'x', href: '' }, // hidden
 ];
 ```
+
+Links get `rel="me"`, which lets services like Mastodon and GitHub verify that this site is yours.
 
 ### Design notes
 
@@ -125,7 +138,7 @@ The look comes from a few rules. Keep them in mind when you change the styles:
 
 - **Four colors only:** `--background`, `--foreground`, `--muted`, and `--border` at the top of `src/styles/global.css`. Code highlighting is the one exception.
 - **Two typefaces, both system fonts:** sans for reading, monospace (`--font-mono`, at `--meta-size`) for anything that is data: dates, tags, reading time, navigation, the footer, and code.
-- **Homepage introduction:** the first paragraph of `introduction.md` is styled as the headline. Later paragraphs are the lede.
+- **Homepage introduction:** the first paragraph of `introduction.md` is styled as the headline. Later paragraphs are normal body text.
 - **The index:** on screens 960px and wider, each year hangs in the left margin beside its posts, and dotted leaders run from each title to its tag and reading time. On narrow screens the year sits above its posts and the meta wraps under the title.
 - **Wide-screen details:** heading `#` links hang in the left margin, and code blocks extend slightly past the text column and show their language in the corner.
 
@@ -160,7 +173,7 @@ The look comes from a few rules. Keep them in mind when you change the styles:
    | Field         | Required | Notes                                                        |
    | ------------- | -------- | ------------------------------------------------------------ |
    | `title`       | yes      | Page title and heading.                                      |
-   | `description` | yes      | Used for the meta description, social previews, and RSS.     |
+   | `description` | yes      | A one-liner (200 characters max). Shown under the title on the homepage and the post page, and used for SEO, social previews, and RSS. |
    | `publishedAt` | yes      | `YYYY-MM-DD`. Controls ordering and the year group.          |
    | `updatedAt`   | no       | `YYYY-MM-DD`. Shown as "updated …" when it differs from `publishedAt`. |
    | `tags`        | yes      | At least one. The **first tag** is shown on the homepage.    |
@@ -300,6 +313,21 @@ Astro's Markdown processor (Sätteri) can parse `$inline$` and `$$display$$` mat
 1. `npm install katex`
 2. In `astro.config.mjs`, enable math: `satteri({ features: { math: true }, hastPlugins: [...] })`. Math then arrives as `<code class="language-math math-inline">` and `<pre><code class="language-math math-display">`.
 3. Add a small hast plugin, alongside `src/lib/heading-anchors.ts`, that replaces those nodes with `katex.renderToString(text, { displayMode, output: 'mathml' })`. MathML output needs no extra CSS or fonts and renders in all current browsers.
+
+---
+
+## Accessibility and reading features
+
+Built in, no configuration needed:
+
+- **Semantic structure:** one `h1` per page, landmarks (`header`, `nav`, `main`, `footer`), a "Skip to content" link, and `aria-current` on the active nav link.
+- **Keyboard:** every link has a visible focus outline.
+- **Target size:** small text links (nav, links row, back links) have at least 24px tall tap areas (WCAG 2.2).
+- **Contrast:** grey text is #555 on white (7.4:1). Readers who turn on "increase contrast" in their OS get black instead of grey (`prefers-contrast: more`).
+- **Motion:** there are no animations, and `prefers-reduced-motion` is respected anyway.
+- **Previous / next links** at the end of each post.
+- **Print:** navigation is hidden and external link URLs are printed after the link text.
+- **Structured data:** each post includes schema.org `BlogPosting` data (author, dates, description). The homepage includes `WebSite` data with your profile links.
 
 ---
 

@@ -7,12 +7,13 @@ interface Props {
 }
 
 const { post, minutes } = Astro.props;
-const { title, publishedAt, updatedAt, tags, draft } = post.data;
+const { title, description, publishedAt, updatedAt, tags, draft } = post.data;
 const showUpdated = updatedAt && updatedAt.valueOf() !== publishedAt.valueOf();
 ---
 
 <header class="post-header">
   <h1 class="post-title">{title}</h1>
+  <p class="post-summary">{description}</p>
   <p class="post-meta">
     <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
     {

@@ -1,6 +1,6 @@
 ---
 title: "Sample: A Plain Prose Post"
-description: "Sample content showing how a simple, nontechnical post looks. Safe to delete."
+description: "What an ordinary prose post looks like on this site: paragraphs, lists, and quotes."
 publishedAt: 2026-10-20
 tags:
   - thoughts

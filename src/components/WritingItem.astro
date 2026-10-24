@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, publishedAt, tags, draft } = post.data;
+const { title, description, publishedAt, tags, draft } = post.data;
 ---
 
 <li class="entry">
@@ -16,4 +16,5 @@ const { title, publishedAt, tags, draft } = post.data;
   <span class="entry-meta">
     {tags[0]} · {readingTime(post.body)} min{draft && ' · draft'}
   </span>
+  <p class="entry-summary">{description}</p>
 </li>
