@@ -9,12 +9,11 @@ const { post } = Astro.props;
 const { title, publishedAt, tags, draft } = post.data;
 ---
 
-<li class="writing-item">
-  <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt, 'short')}</time>
-  <div>
-    <a href={`/posts/${post.id}`}>{title}</a>
-    <p class="meta">
-      {tags[0]} · {readingTime(post.body)} min{draft && ' · draft'}
-    </p>
-  </div>
+<li class="entry">
+  <time class="entry-date" datetime={publishedAt.toISOString()}>{formatDate(publishedAt, 'short')}</time>
+  <a class="entry-title" href={`/posts/${post.id}`}>{title}</a>
+  <span class="entry-leader" aria-hidden="true"></span>
+  <span class="entry-meta">
+    {tags[0]} · {readingTime(post.body)} min{draft && ' · draft'}
+  </span>
 </li>

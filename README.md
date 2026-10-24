@@ -119,6 +119,16 @@ export const socialLinks: SocialLink[] = [
 ];
 ```
 
+### Design notes
+
+The look comes from a few rules. Keep them in mind when you change the styles:
+
+- **Four colors only:** `--background`, `--foreground`, `--muted`, and `--border` at the top of `src/styles/global.css`. Code highlighting is the one exception.
+- **Two typefaces, both system fonts:** sans for reading, monospace (`--font-mono`, at `--meta-size`) for anything that is data: dates, tags, reading time, navigation, the footer, and code.
+- **Homepage introduction:** the first paragraph of `introduction.md` is styled as the headline. Later paragraphs are the lede.
+- **The index:** on screens 960px and wider, each year hangs in the left margin beside its posts, and dotted leaders run from each title to its tag and reading time. On narrow screens the year sits above its posts and the meta wraps under the title.
+- **Wide-screen details:** heading `#` links hang in the left margin, and code blocks extend slightly past the text column and show their language in the corner.
+
 ---
 
 ## Publishing a new article
@@ -384,14 +394,17 @@ The site uses **Vercel Web Analytics** through the official `@vercel/analytics` 
 1. In Vercel: **Project → Analytics → Enable**. (The tab may be named *Web Analytics*.)
 2. Redeploy. The next deployment starts collecting.
 
-Until you enable it, the script's requests to `/_vercel/insights/*` return 404. That's harmless.
+Until you enable it, the script's requests return 404. That's harmless.
+
+You can also enable it from the CLI: `vercel api "/web/insights/toggle?projectId=<project id>" -X POST -F value=true`. The project id is in `.vercel/project.json` after `vercel link`.
 
 ### Verify events
 
 1. Open the deployed site (production or a preview URL).
 2. Open the browser DevTools **Network** tab and reload.
-3. Look for a request to `/_vercel/insights/script.js` and, after the page loads, a request to `/_vercel/insights/view`. Status 200 or 204 means it's working.
-4. Ad blockers often block these requests. Test in a private window without extensions.
+3. Look for two same-origin requests: `…/script.js` and, after the page loads, `…/view`. Status 200 means it's working. Vercel serves these from a random per-project path such as `/42127278aaabc117/` (or `/_vercel/insights/` on older setups), which helps them get past ad blockers.
+4. Some ad blockers still block them. If nothing shows up, test in a private window without extensions.
+5. Page views appear in the dashboard within a minute or two.
 
 In `npm run dev`, the component runs in debug mode and logs page views to the browser console instead of sending them.
 
@@ -440,5 +453,6 @@ Go to **Vercel → Project → Analytics**. It shows visitors, page views, top p
 | Vercel build fails but local build works | Match Node versions (Vercel → Settings → Build and Deployment → Node.js Version = 24.x), and make sure `package-lock.json` is committed. |
 | Two deployments per push | Remove any deploy step from GitHub Actions. Vercel's Git integration already deploys. |
 | Analytics shows no data | Enable Analytics in the Vercel project, redeploy, and test without an ad blocker. |
+| The first deployment of a new Vercel project went to production from a feature branch | Vercel makes a project's first deployment production regardless of branch. Later branch pushes are previews. Merge to `main` to replace it. |
 | URLs ending in `/` redirect | Intended. `vercel.json` sets `trailingSlash: false` so each page has one URL. |
 | Custom domain shows "Invalid configuration" | DNS changes can take up to a few hours. Re-check the records in Vercel → Domains. |

@@ -17,13 +17,13 @@ for (const post of posts) {
 ---
 
 <section class="writing" aria-labelledby="writing-heading">
-  <h2 id="writing-heading">Writing</h2>
+  <h2 id="writing-heading" class="section-label">Writing</h2>
   {posts.length === 0 && <p class="meta">Nothing published yet.</p>}
   {
     [...years].map(([year, yearPosts]) => (
-      <section aria-labelledby={`year-${year}`}>
+      <section class="year-group" aria-labelledby={`year-${year}`}>
         <h3 id={`year-${year}`} class="year">{year}</h3>
-        <ul class="writing-items">
+        <ul class="entries">
           {yearPosts.map((post) => (
             <WritingItem post={post} />
           ))}
