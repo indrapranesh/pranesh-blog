@@ -12,7 +12,7 @@ export const site = {
 
   // The production URL of the site, without a trailing slash.
   // Used for canonical URLs, the sitemap, RSS, and social previews.
-  url: 'https://example.com',
+  url: 'https://pranesh-blog.vercel.app',
 
   // Fallback meta description for pages that do not provide their own.
   defaultSeoDescription:
