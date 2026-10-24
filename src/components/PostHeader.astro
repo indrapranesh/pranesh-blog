@@ -12,21 +12,20 @@ const showUpdated = updatedAt && updatedAt.valueOf() !== publishedAt.valueOf();
 ---
 
 <header class="post-header">
-  <h1>{title}</h1>
-  <p class="meta">
+  <h1 class="post-title">{title}</h1>
+  <p class="post-meta">
     <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
     {
       showUpdated && (
-        <>
-          {' · updated '}
-          <time datetime={updatedAt.toISOString()}>{formatDate(updatedAt)}</time>
-        </>
+        <span>
+          updated <time datetime={updatedAt.toISOString()}>{formatDate(updatedAt)}</time>
+        </span>
       )
     }
-    {' · '}{minutes} min read
-    {draft && ' · draft'}
+    <span>{minutes} min read</span>
+    {draft && <span>draft</span>}
   </p>
-  <ul class="inline-list meta" aria-label="Tags">
+  <ul class="post-tags" aria-label="Tags">
     {tags.map((tag) => <li>{tag}</li>)}
   </ul>
 </header>

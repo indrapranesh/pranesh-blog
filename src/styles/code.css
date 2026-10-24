@@ -6,22 +6,25 @@ samp,
 pre {
   font-family: var(--font-mono);
   font-size: 0.875em;
+  font-variant-ligatures: none;
 }
 
 :not(pre) > code {
-  padding: 0.1em 0.3em;
+  padding: 0.1em 0.35em;
   border: 1px solid var(--border);
-  border-radius: 3px;
-  overflow-wrap: break-word;
+  border-radius: 4px;
+  font-size: 0.85em;
 }
 
 pre {
-  margin: 0 0 var(--space);
-  padding: 1rem;
+  position: relative;
+  margin: 2rem 0;
+  padding: 1.25rem 1.25rem 1.25rem;
   border: 1px solid var(--border);
-  border-radius: 3px;
+  border-radius: 6px;
   overflow-x: auto;
-  line-height: 1.55;
+  font-size: 0.8125rem;
+  line-height: 1.65;
   tab-size: 2;
 }
 
@@ -32,4 +35,24 @@ pre code {
 /* Shiki sets its own background; keep code blocks on the page color. */
 pre.astro-code {
   background-color: var(--background) !important;
+}
+
+/* Language label in the top-right corner, read from Shiki's data-language attribute. */
+pre[data-language]:not([data-language="plaintext"])::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  text-transform: lowercase;
+  pointer-events: none;
+}
+
+/* Code blocks break out slightly wider than the text on large screens. */
+@media (min-width: 800px) {
+  .prose pre {
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+  }
 }

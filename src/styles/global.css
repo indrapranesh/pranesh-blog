@@ -1,4 +1,4 @@
-/* Colors, layout, and site chrome (header, footer, homepage list). */
+/* Tokens, layout, and site chrome (header, footer, homepage index). */
 
 :root {
   --background: #ffffff;
@@ -7,7 +7,10 @@
   --border: #dddddd;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Small monospace text for dates, tags, navigation, and other metadata. */
+  --meta-size: 0.8125rem;
 
   --content-width: 700px;
   --space: 1.5rem;
@@ -34,6 +37,7 @@ body {
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
@@ -44,25 +48,34 @@ body {
 }
 
 .container {
-  max-width: var(--content-width);
+  max-width: calc(var(--content-width) + 2.5rem);
   margin: 0 auto;
-  padding: 2rem 1.25rem 3rem;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-top: 4rem;
+  }
 }
 
 a {
   color: var(--foreground);
   text-decoration: underline;
-  text-underline-offset: 0.15em;
+  text-decoration-color: var(--muted);
   text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
 
 a:hover {
+  text-decoration-color: var(--foreground);
   text-decoration-thickness: 2px;
 }
 
 :focus-visible {
   outline: 2px solid var(--foreground);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 1px;
 }
 
 img {
@@ -70,24 +83,14 @@ img {
   height: auto;
 }
 
-.meta {
+/* Shared style for metadata: dates, tags, reading time. */
+.meta,
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+  line-height: 1.6;
   color: var(--muted);
-  font-size: 0.9em;
-}
-
-.inline-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 0.5em;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.inline-list li + li::before {
-  content: "·";
-  margin-right: 0.5em;
-  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .visually-hidden {
@@ -109,6 +112,8 @@ img {
   padding: 0.5rem 0.75rem;
   background: var(--background);
   border: 1px solid var(--foreground);
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
 }
 
 .skip-link:focus {
@@ -122,108 +127,283 @@ img {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
-  gap: 0.5rem 1rem;
-  margin-bottom: 2.5rem;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 4rem;
 }
 
 .site-title {
-  font-weight: 600;
+  font-weight: 650;
+  letter-spacing: -0.01em;
   text-decoration: none;
 }
 
 .site-title:hover {
   text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 .site-header ul {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   margin: 0;
   padding: 0;
   list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
 }
 
-.site-header [aria-current="page"] {
-  text-decoration-thickness: 2px;
+.site-header nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-header nav a:hover,
+.site-header nav a[aria-current="page"] {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--foreground);
 }
 
 /* Footer */
 
 .site-footer {
-  margin-top: 4rem;
-  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 6rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
   color: var(--muted);
-  font-size: 0.9em;
 }
 
-.site-footer p {
-  margin: 0.5rem 0 0;
-}
-
-/* Homepage */
-
-.introduction {
-  margin-bottom: 3rem;
-}
-
-.writing > h2 {
-  margin: 0 0 1rem;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.year {
-  margin: 1.5rem 0 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.writing-items {
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.writing-item {
-  display: grid;
-  grid-template-columns: 4.5em 1fr;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
+.footer-links a {
+  color: var(--muted);
 }
 
-.writing-item time {
+.footer-links a:hover {
+  color: var(--foreground);
+}
+
+.footer-text {
+  margin: 0;
+}
+
+/* Homepage introduction: the first paragraph is the headline, the rest a lede. */
+
+.introduction {
+  margin-bottom: 5rem;
+}
+
+.introduction > p:first-child {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.introduction > p:not(:first-child) {
+  max-width: 34em;
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .introduction > p:first-child {
+    font-size: 2.25rem;
+  }
+
+  .introduction > p:not(:first-child) {
+    font-size: 1.25rem;
+  }
+}
+
+/* Homepage index */
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+.year-group {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.year {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* On wide screens the year hangs in the left margin, outside the text column. */
+@media (min-width: 960px) {
+  .year {
+    position: absolute;
+    /* Line up with the first entry's date: same top padding and line box. */
+    top: 0.35rem;
+    right: calc(100% + 1.5rem);
+    margin: 0;
+    line-height: calc(1.7 * 1.0625rem);
+    padding-top: 0.1em;
+  }
+}
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Each entry:  date   title ···················· tag · min
+ * On narrow screens the leader is dropped and the meta wraps under the title.
+ */
+.entry {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.35rem 0;
+}
+
+.entry-date {
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.writing-item .meta {
-  margin: 0;
+.entry-title {
+  font-weight: 500;
+  text-decoration-color: var(--border);
+}
+
+.entry-title:hover {
+  text-decoration-color: var(--foreground);
+}
+
+.entry-leader {
+  display: none;
+}
+
+.entry-meta {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .entry {
+    grid-template-columns: 4.25rem minmax(0, max-content) minmax(1.5rem, 1fr) auto;
+    align-items: last baseline;
+  }
+
+  .entry-leader {
+    display: block;
+    align-self: last baseline;
+    height: 0;
+    margin-bottom: 0.5em;
+    border-bottom: 1px dotted var(--muted);
+    opacity: 0.5;
+  }
+
+  .entry-meta {
+    grid-column: auto;
+  }
 }
 
 /* Articles */
 
 .back {
-  margin: 0 0 2rem;
+  margin: 0 0 2.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+}
+
+.back a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.back a:hover {
+  color: var(--foreground);
+  text-decoration: underline;
 }
 
 .back-bottom {
-  margin: 3rem 0 0;
+  margin: 4rem 0 0;
 }
 
 .post-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
 }
 
-.post-header h1 {
-  margin: 0 0 0.5rem;
+.post-title {
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
-.post-header .meta {
+@media (min-width: 640px) {
+  .post-title {
+    font-size: 2.625rem;
+  }
+}
+
+.post-meta,
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.6em;
   margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--meta-size);
+  line-height: 1.8;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.post-meta > * + *::before,
+.post-tags > li + li::before {
+  content: "·";
+  margin-right: 0.6em;
 }
 
 @media (prefers-reduced-motion: reduce) {
